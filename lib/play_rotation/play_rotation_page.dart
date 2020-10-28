@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:drawing_interface_learning/music_play/player_song_page.dart';
 import 'package:drawing_interface_learning/play_rotation/model/Particle.dart';
 import 'package:drawing_interface_learning/play_rotation/run_particle_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 
 class PlayRotationPage extends StatefulWidget{
   @override
@@ -12,7 +14,11 @@ class PlayRotationPage extends StatefulWidget{
     return _PlayRotationPage();
   }
 }
+final GlobalKey<PlayerState> musicPlayerKey = new GlobalKey();
+const String mp3Url = 'http://lc-pdocKLdh.cn-n1.lcfile.com/174318a0265d4393f535/%E5%AF%BB%E6%89%BE%2B%E5%BF%BD%E7%84%B6%2B%E7%83%AD%E6%B2%B3.mp3';
+
 class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderStateMixin{
+  var _start = DateTime.now().millisecondsSinceEpoch;
   AnimationController _controller;
   AnimationController _picController;
   bool flag = true;
@@ -24,7 +30,7 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
     super.initState();
     Random random = Random();
     Random randomY = Random();
-    for (var i = 0; i < 800; i++) {
+    for (var i = 0; i < 1000; i++) {
       int circleAngle = random.nextInt(359)+1;
       int circleRange = random.nextInt(80)+1;
       double tempX = (80+circleRange)*cos(circleAngle);
@@ -41,9 +47,6 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
     }
     _controller = AnimationController(duration: Duration(days: 999*365),vsync: this);
     _picController = AnimationController(duration: Duration(seconds:20 ),vsync: this);
-   /* _controller.addListener(() {
-      _render();
-    });*/
     _picController.addStatusListener((status) {
       if(status == AnimationStatus.completed){
         _picController.reset();
@@ -61,23 +64,24 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
   }
 
   _render(){
-    for (var i = 0; i < _particles.length; i++) {
-      updateParticle(i);
-    }
+    updateParticle();
+    var cost = DateTime.now().millisecondsSinceEpoch;
+    print("时间差:${cost - _start}ms,帧率:${1000 / (cost - _start)}");
+    _start = cost;
   }
 
-  void updateParticle(int i){
-    var particle = _particles[i];
-    particle.x += particle.speed*cos(particle.angle);
-    particle.y += particle.speed*sin(particle.angle);
-    particle.runDistance += particle.speed;
-    //限定下边界
-    if (particle.runDistance > 80) {
-      particle.x = 220+100*cos(particle.angle);
-      particle.y = 300+100*sin(particle.angle);
-      particle.runDistance = 1 ;
-    }
-
+  void updateParticle(){
+    _particles.forEach((particle) {
+      particle.x += particle.speed*cos(particle.angle);
+      particle.y += particle.speed*sin(particle.angle);
+      particle.runDistance += particle.speed;
+      //限定下边界
+      if (particle.runDistance > 80) {
+        particle.x = 220+100*cos(particle.angle);
+        particle.y = 300+100*sin(particle.angle);
+        particle.runDistance = 0 ;
+      }
+    });
   }
 
 
@@ -135,6 +139,39 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
                       ),
                     )
                   ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 40),
+                child:  Player(
+                    color: Colors.white,
+                    audioUrl: mp3Url,
+                    onCompleted: (){
+                    },
+                    onPlaying: (isPlaying){
+                      if(isPlaying ){
+                        showToast("播放");
+                      }else{
+                        showToast("暂停");
+                      }
+                    },
+                    key: musicPlayerKey,
+                    onError: (e){
+                      Scaffold.of(context).showSnackBar(
+                          new SnackBar(
+                            content: new Text(e),
+                          )
+                      );
+                    },
+                    onNext: (){
+
+                    },
+                    onPrevious: (){
+
+                    }
                 ),
               ),
             )

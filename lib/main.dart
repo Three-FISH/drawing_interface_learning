@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
 
+import 'calendar/calendar_picker_page.dart';
 import 'card_swiper/card_swiper_page.dart';
 
 void main() {
@@ -18,11 +19,11 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return OKToast(
         child: new MaterialApp(
+           debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: ThemeData(
               primarySwatch: Colors.deepOrange,
@@ -85,6 +86,18 @@ class _MyHomePageState extends State<MyHomePage> {
            onTap: (){
              Navigator.of(context).push(MaterialPageRoute(builder: (context){
                return CardSWiperPage();
+             }));
+           },
+         ),
+         InkWell(
+           child: Container(
+             width: double.infinity,
+             padding: EdgeInsets.all( 10),
+             child: Text("4、日历",style: TextStyle(fontSize: 16),),
+           ),
+           onTap: (){
+             Navigator.of(context).push(MaterialPageRoute(builder: (context){
+               return CalendarPickerPage();
              }));
            },
          ),
