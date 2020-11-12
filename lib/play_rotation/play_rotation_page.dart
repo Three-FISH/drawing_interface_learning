@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:drawing_interface_learning/music_play/player_song_page.dart';
 import 'package:drawing_interface_learning/play_rotation/model/Particle.dart';
 import 'package:drawing_interface_learning/play_rotation/run_particle_widget.dart';
@@ -16,8 +17,10 @@ class PlayRotationPage extends StatefulWidget{
 }
 final GlobalKey<PlayerState> musicPlayerKey = new GlobalKey();
 const String mp3Url = 'http://lc-pdocKLdh.cn-n1.lcfile.com/174318a0265d4393f535/%E5%AF%BB%E6%89%BE%2B%E5%BF%BD%E7%84%B6%2B%E7%83%AD%E6%B2%B3.mp3';
-
+const String testUrl = "https://luan.xyz/files/audio/nasa_on_a_mission.mp3";
 class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderStateMixin{
+  AudioPlayer audioPlayer;
+
   var _start = DateTime.now().millisecondsSinceEpoch;
   AnimationController _controller;
   AnimationController _picController;
@@ -28,6 +31,8 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
   @override
   void initState() {
     super.initState();
+    audioPlayer = AudioPlayer();
+
     Random random = Random();
     Random randomY = Random();
     for (var i = 0; i < 1000; i++) {
@@ -148,7 +153,7 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
                 padding: EdgeInsets.only(bottom: 40),
                 child:  Player(
                     color: Colors.white,
-                    audioUrl: mp3Url,
+                    audioUrl: testUrl,
                     onCompleted: (){
                     },
                     onPlaying: (isPlaying){
@@ -174,7 +179,8 @@ class _PlayRotationPage extends State<PlayRotationPage> with TickerProviderState
                     }
                 ),
               ),
-            )
+            ),
+
 
           ],
 

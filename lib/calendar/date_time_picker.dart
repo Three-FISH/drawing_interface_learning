@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drawing_interface_learning/common/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'picker.dart' as picker;
 
 showDateTimePicker(
-  BuildContext context, {
-  DateTime initial,
-  Function(DateTime) onConfirm,
-  Function onCancel,
-}) {
+    BuildContext context, {
+      DateTime initial,
+      Function(DateTime) onConfirm,
+      Function onCancel,
+    }) {
   assert(context != null);
 
   showModalBottomSheet(
@@ -20,7 +22,7 @@ showDateTimePicker(
       builder: (BuildContext context) {
         return WillPopScope(
             child:
-                _DateTimePicker(initialDateTime: initial, onConfirm: onConfirm),
+            _DateTimePicker(initialDateTime: initial, onConfirm: onConfirm),
             onWillPop: () async {
               onCancel?.call();
               return true;
@@ -29,7 +31,7 @@ showDateTimePicker(
 }
 
 /// 高度像素比，用于适配屏幕高度
-double _hpx = UISize.screenHeight/ 812;
+double _hpx = UISize.screenHeight / 812;
 
 /// 宽度像素比，用于适配屏幕宽度
 double _wpx = UISize.screenWidth / 375;
@@ -100,16 +102,16 @@ class _DateTimePickerState extends State<_DateTimePicker>
 
     _slideDateAnimation =
         Tween<double>(begin: UISize.screenWidth, end: 0).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.fastOutSlowIn,
-      reverseCurve: Curves.fastOutSlowIn,
-    ));
+          parent: _controller,
+          curve: Curves.fastOutSlowIn,
+          reverseCurve: Curves.fastOutSlowIn,
+        ));
     _slideTimeAnimation =
         Tween<double>(begin: 0, end: UISize.screenWidth).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.fastOutSlowIn,
-      reverseCurve: Curves.fastOutSlowIn,
-    ));
+          parent: _controller,
+          curve: Curves.fastOutSlowIn,
+          reverseCurve: Curves.fastOutSlowIn,
+        ));
     super.initState();
   }
 
@@ -127,8 +129,8 @@ class _DateTimePickerState extends State<_DateTimePicker>
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(6),
-              topRight: Radius.circular(6),
+              topLeft: Radius.circular(6*_wpx),
+              topRight: Radius.circular(6*_wpx),
             )),
         child: Column(
           children: [
@@ -144,9 +146,11 @@ class _DateTimePickerState extends State<_DateTimePicker>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           GestureDetector(
+
                             onTap: () {
                               _onChangedUiMode(true);
                             },
+                            behavior: HitTestBehavior.translucent,
                             child: Container(
                               width: _wpx * 115.5,
                               child: Column(
@@ -159,7 +163,7 @@ class _DateTimePickerState extends State<_DateTimePicker>
                                           '${_currentDateTime?.year}年${_twoDig(_currentDateTime?.month)}月${_twoDig(_currentDateTime?.day)}日',
                                           style: TextStyle(
                                               color: _colorLeftAnimation.value,
-                                              fontSize: 15,
+                                              fontSize: 15*_wpx,
                                               fontWeight: FontWeight.w600));
                                     },
                                   ),
@@ -187,7 +191,7 @@ class _DateTimePickerState extends State<_DateTimePicker>
                                           '$_selectHour:$_selectMinute',
                                           style: TextStyle(
                                               color: _colorRightAnimation.value,
-                                              fontSize: 15,
+                                              fontSize: 14*_wpx,
                                               fontWeight: FontWeight.w600),
                                         );
                                       }),
@@ -204,7 +208,7 @@ class _DateTimePickerState extends State<_DateTimePicker>
                                   '确定',
                                   style: TextStyle(
                                       color: const Color(0xFF2888FF),
-                                      fontSize: 15,
+                                      fontSize: 15*_wpx,
                                       fontWeight: FontWeight.w600),
                                 ),
                               ))
@@ -233,53 +237,53 @@ class _DateTimePickerState extends State<_DateTimePicker>
               ),
             ),
             Container(
-              height: 1,
+              height: 1*_wpx,
               color: const Color(0xFFEFF4F8),
             ),
             Expanded(
                 child: _dateMode
                     ? AnimatedBuilder(
-                        animation: _slideDateAnimation,
-                        builder: (_, __) {
-                          return Row(
-                            children: [
-                              _DatePicker(
-                                width: _slideDateAnimation.value,
-                                initial: _currentDateTime,
-                                onSelectedDate: (value, isClickDate) {
-                                  setState(() {
-                                    _currentDateTime = value;
-                                    if (isClickDate) {
-                                      _dateMode = false;
-                                      if (_controller.status ==
-                                          AnimationStatus.completed) {
-                                        _controller?.reverse();
-                                      } else {
-                                        _controller?.forward();
-                                      }
-                                    }
-                                  });
-                                },
-                              )
-                            ],
-                          );
-                        })
+                    animation: _slideDateAnimation,
+                    builder: (_, __) {
+                      return Row(
+                        children: [
+                          _DatePicker(
+                            width: _slideDateAnimation.value,
+                            initial: _currentDateTime,
+                            onSelectedDate: (value, isClickDate) {
+                              setState(() {
+                                _currentDateTime = value;
+                                if (isClickDate) {
+                                  _dateMode = false;
+                                  if (_controller.status ==
+                                      AnimationStatus.completed) {
+                                    _controller?.reverse();
+                                  } else {
+                                    _controller?.forward();
+                                  }
+                                }
+                              });
+                            },
+                          )
+                        ],
+                      );
+                    })
                     : AnimatedBuilder(
-                        animation: _slideTimeAnimation,
-                        builder: (_, __) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              _TimePicker(
-                                width: _slideTimeAnimation.value,
-                                selectHour: _selectHour,
-                                selectMinute: _selectMinute,
-                                onHourSelected: _onHourSelected,
-                                onMinuteSelected: _onMinuteSelected,
-                              )
-                            ],
-                          );
-                        }))
+                    animation: _slideTimeAnimation,
+                    builder: (_, __) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _TimePicker(
+                            width: _slideTimeAnimation.value,
+                            selectHour: _selectHour,
+                            selectMinute: _selectMinute,
+                            onHourSelected: _onHourSelected,
+                            onMinuteSelected: _onMinuteSelected,
+                          )
+                        ],
+                      );
+                    }))
           ],
         ));
   }
@@ -374,6 +378,10 @@ class __DatePickerState extends State<_DatePicker> {
   /// 用户选择的时间
   DateTime _currentDateTime;
 
+  final double _minTextScale = 1.0;
+  double _textScale = 1.0;
+  MediaQueryData _data;
+
   @override
   void initState() {
     _showPageIndex = _pageViewLength ~/ 2;
@@ -383,10 +391,21 @@ class __DatePickerState extends State<_DatePicker> {
   }
 
   @override
+  void didChangeDependencies() {
+    final data = MediaQuery.of(context);
+    _textScale = min(_minTextScale, data.textScaleFactor);
+    _data = data.copyWith(textScaleFactor: _textScale);
+    super.didChangeDependencies();
+  }
+
+  @override
   void didUpdateWidget(covariant _DatePicker oldWidget) {
-    _pageController?.dispose();
-    _pageController = PageController(initialPage: _showPageIndex);
-    _initDate(dateTime: widget.initial ?? DateTime.now());
+    if (widget.initial.millisecondsSinceEpoch !=
+        oldWidget.initial.millisecondsSinceEpoch) {
+      _pageController?.dispose();
+      _pageController = PageController(initialPage: _showPageIndex);
+      _initDate(dateTime: widget.initial ?? DateTime.now());
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -399,205 +418,216 @@ class __DatePickerState extends State<_DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.width ?? UISize.screenWidth,
-      height: 296.5 * _hpx,
-      child: PageView.builder(
-          controller: _pageController,
-          itemCount: 100000000,
-          onPageChanged: (index) {
-            var offset = index - _showPageIndex;
-            DateTime dateTime;
-            if (offset < 0) {
-              dateTime = _previousMonth(_days[_currentMonthIndex]);
-              _days = _getShowDateArray(dateTime: dateTime);
-              _currentDateTime = _getPreviousMonth(_currentDateTime);
-            } else {
-              dateTime = _nextMonth(_days[_currentMonthIndex]);
-              _days = _getShowDateArray(dateTime: dateTime);
-              _currentDateTime = _getNextMonth(_currentDateTime);
-            }
-            _showPageIndex = index;
-            setState(() {});
-            widget.onSelectedDate?.call(
-                DateTime(
-                  _currentDateTime.year,
-                  _currentDateTime.month,
-                  _currentDateTime.day,
-                ),
-                false);
-          },
-          itemBuilder: (_, index) {
-            var i = 0;
-            return Wrap(
-              spacing: 0,
-              alignment: WrapAlignment.center,
-              runSpacing: 0,
-              runAlignment: WrapAlignment.center,
-              children: [..._titles, ..._days].map((e) {
-                i++;
-                if (e is String)
-                  return Container(
-                    width: UISize.screenWidth / 7,
-                    height: 296.5 / 7 * _hpx,
-                    child: Center(
-                      child: Text(
-                        e,
-                        style: TextStyle(
-                            fontSize: 11 ,
-                            color: Color(0xFF333333),
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                  );
-                if (e is DateTime)
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _currentDateTime = e;
-                        if (i < _currentMonthIndex ||
-                            i >
-                                (_currentMonthIndex +
-                                    _currentMonthLength -
-                                    1)) {
-                          _days = _getShowDateArray(dateTime: e);
-                        }
-                      });
-                      widget.onSelectedDate?.call(
-                          DateTime(
-                            _currentDateTime.year,
-                            _currentDateTime.month,
-                            _currentDateTime.day,
-                          ),
-                          true);
-                    },
-                    child: Container(
-                      width: UISize.screenWidth / 7,
+    return MediaQuery(
+      data: _data,
+      child: Container(
+        width: widget.width ?? UISize.screenWidth,
+        height: 296.5 * _hpx,
+        child: PageView.builder(
+            controller: _pageController,
+            itemCount: 100000000,
+            onPageChanged: _onPageChanged,
+            itemBuilder: (_, index) {
+              var i = 0;
+              return Wrap(
+                spacing: 0,
+                alignment: WrapAlignment.center,
+                runSpacing: 0,
+                runAlignment: WrapAlignment.center,
+                children: [..._titles, ..._days].map((e) {
+                  i++;
+                  if (e is String)
+                    return Container(
+                      width: (UISize.screenWidth - 30 * _wpx) / 7,
                       height: 296.5 / 7 * _hpx,
                       child: Center(
-                          child: _days[_currentMonthIndex]?.month == e.month &&
-                                  e.day == 1
-                              ? Builder(builder: (_) {
-                                  if (_isSameDay(_currentDateTime, e))
-                                    return Container(
-                                      width: 32,
-                                      height: 32,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF2888FF),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4 )),
-                                      ),
-                                      child: Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              '${e.month}',
-                                              style: TextStyle(
-                                                  fontSize: 12 ,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            Text(
-                                              '月',
-                                              style: TextStyle(
-                                                  fontSize: 8 ,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w400),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        '${e.month}',
-                                        style: TextStyle(
-                                            fontSize: 12 ,
-                                            color: const Color(0xFF2888FF),
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Text(
-                                        '月',
-                                        style: TextStyle(
-                                            fontSize: 8 ,
-                                            color: const Color(0xFF2888FF),
-                                            fontWeight: FontWeight.w400),
-                                      )
-                                    ],
-                                  );
-                                })
-                              : _isSameDay(_currentDateTime, e)
-                                  ? Container(
-                                      width: 32,
-                                      height: 32,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF2888FF),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4 )),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${e.day}',
+                        child: Text(
+                          e,
+                          style: TextStyle(
+                              fontSize: 11*_wpx,
+                              color: const Color(0xFF333333),
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    );
+                  if (e is DateTime)
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _currentDateTime = e;
+                          if (i < _currentMonthIndex ||
+                              i >
+                                  (_currentMonthIndex +
+                                      _currentMonthLength -
+                                      1)) {
+                            _days = _getShowDateArray(dateTime: e);
+                          }
+                        });
+                        widget.onSelectedDate?.call(
+                            DateTime(
+                              _currentDateTime.year,
+                              _currentDateTime.month,
+                              _currentDateTime.day,
+                            ),
+                            true);
+                      },
+                      child: Container(
+                        width: (UISize.screenWidth - 30 * _wpx) / 7,
+                        height: 296.5 / 7 * _hpx,
+                        child: Center(
+                            child: _days[_currentMonthIndex]?.month ==
+                                e.month &&
+                                e.day == 1
+                                ? Builder(builder: (_) {
+                              if (_isSameDay(_currentDateTime, e))
+                                return Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2888FF),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(4*_wpx)),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${e.month}',
                                           style: TextStyle(
-                                              fontSize: 14 ,
+                                              fontSize: 12*_wpx,
                                               color: Colors.white,
-                                              fontWeight: FontWeight.w400),
+                                              fontWeight:
+                                              FontWeight.w600),
                                         ),
-                                      ),
-                                    )
-                                  : _isSameDay(DateTime.now(), e)
-                                      ? Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0x552888FF),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(4 )),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '${e.day}',
-                                              style: TextStyle(
-                                                  fontSize: 14 ,
-                                                  color:
-                                                      const Color(0xFF2888FF),
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        )
-                                      : Text(
-                                          '${e.day}',
+                                        Text(
+                                          '月',
                                           style: TextStyle(
-                                              fontSize: 14 ,
-                                              color: _days[_currentMonthIndex]
-                                                          ?.month !=
-                                                      e.month
-                                                  ? const Color(0xFFAFB9CF)
-                                                  : const Color(0xFF333333),
-                                              fontWeight: FontWeight.w400),
-                                        )),
-                    ),
-                  );
-                throw 'Unknown data type';
-              }).toList(),
-            );
-          }),
+                                              fontSize: 8*_wpx,
+                                              color: Colors.white,
+                                              fontWeight:
+                                              FontWeight.w400),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              return Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${e.month}',
+                                    style: TextStyle(
+                                        fontSize: 12*_wpx,
+                                        color: const Color(0xFF2888FF),
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    '月',
+                                    style: TextStyle(
+                                        fontSize: 8*_wpx,
+                                        color: const Color(0xFF2888FF),
+                                        fontWeight: FontWeight.w400),
+                                  )
+                                ],
+                              );
+                            })
+                                : _isSameDay(_currentDateTime, e)
+                                ? Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2888FF),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(4*_wpx)),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${e.day}',
+                                  style: TextStyle(
+                                      fontSize: 14*_wpx,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            )
+                                : _isSameDay(DateTime.now(), e)
+                                ? Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: const Color(0x552888FF),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(4*_wpx)),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${e.day}',
+                                  style: TextStyle(
+                                      fontSize: 14*_wpx,
+                                      color:
+                                      const Color(0xFF2888FF),
+                                      fontWeight:
+                                      FontWeight.w400),
+                                ),
+                              ),
+                            )
+                                : Text(
+                              '${e.day}',
+                              style: TextStyle(
+                                  fontSize: 14*_wpx,
+                                  color: _days[_currentMonthIndex]
+                                      ?.month !=
+                                      e.month
+                                      ? const Color(0xFFAFB9CF)
+                                      : const Color(0xFF333333),
+                                  fontWeight: FontWeight.w400),
+                            )),
+                      ),
+                    );
+                  throw 'Unknown data type';
+                }).toList(),
+              );
+            }),
+      ),
     );
   }
 
-  _initDate({DateTime dateTime}) {
+  void _initDate({DateTime dateTime}) {
+    assert(dateTime != null);
     _currentDateTime = dateTime;
     _days.clear();
     setState(() {
       _days = _getShowDateArray(dateTime: _currentDateTime);
     });
+  }
+
+  void _onPageChanged(int index) {
+    var offset = index - _showPageIndex;
+    DateTime dateTime;
+    if (offset < 0) {
+      dateTime = _previousMonth(_days[_currentMonthIndex]);
+      _currentDateTime = _getPreviousMonth(_currentDateTime);
+    } else {
+      dateTime = _nextMonth(_days[_currentMonthIndex]);
+      _currentDateTime = _getNextMonth(_currentDateTime);
+    }
+    _days = _getShowDateArray(dateTime: dateTime);
+    _showPageIndex = index;
+    setState(() {});
+    widget.onSelectedDate?.call(
+        DateTime(
+          _currentDateTime.year,
+          _currentDateTime.month,
+          _currentDateTime.day,
+        ),
+        false);
   }
 
   List<DateTime> _getShowDateArray({DateTime dateTime}) {
@@ -703,10 +733,10 @@ class _TimePicker extends StatefulWidget {
 
   _TimePicker(
       {this.width,
-      this.selectHour,
-      this.selectMinute,
-      this.onHourSelected,
-      this.onMinuteSelected});
+        this.selectHour,
+        this.selectMinute,
+        this.onHourSelected,
+        this.onMinuteSelected});
 
   @override
   _TimePickerState createState() => _TimePickerState();
@@ -754,11 +784,11 @@ class _TimePickerState extends State<_TimePicker> {
   Widget build(BuildContext context) {
     final cupertinoTheme = CupertinoTheme.of(context);
     final pickerTextStyle = cupertinoTheme.textTheme.pickerTextStyle
-        .copyWith(fontSize: 14 , color: const Color(0xFF2888FF));
+        .copyWith(fontSize: 14*_wpx, color: const Color(0xFF2888FF));
     final textTheme =
-        cupertinoTheme.textTheme.copyWith(pickerTextStyle: pickerTextStyle);
+    cupertinoTheme.textTheme.copyWith(pickerTextStyle: pickerTextStyle);
     return Container(
-      width: widget.width??UISize.screenWidth,
+      width: widget.width ?? UISize.screenWidth,
       height: 296.5 * _hpx,
       child: Center(
         child: CupertinoTheme(
@@ -784,25 +814,25 @@ class _TimePickerState extends State<_TimePicker> {
                       widget.onHourSelected?.call(_selectHour);
                     },
                     children: _hours?.map((e) {
-                          i++;
-                          final _currentIndex = _hours.indexOf(_selectHour);
-                          return Container(
-                            padding: EdgeInsets.only(
-                                left: 15 * _wpx, right: 15 * _wpx),
-                            child: Center(
-                              child: Text(
-                                e,
-                                style: TextStyle(
-                                    fontSize: 15 ,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                    color: (i - 1) == _currentIndex
-                                        ? const Color(0xFF2888FF)
-                                        : const Color(0xFFAFB9CF)),
-                              ),
-                            ),
-                          );
-                        })?.toList() ??
+                      i++;
+                      final _currentIndex = _hours.indexOf(_selectHour);
+                      return Container(
+                        padding: EdgeInsets.only(
+                            left: 15 * _wpx, right: 15 * _wpx),
+                        child: Center(
+                          child: Text(
+                            e,
+                            style: TextStyle(
+                                fontSize: 15*_wpx,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                color: (i - 1) == _currentIndex
+                                    ? const Color(0xFF2888FF)
+                                    : const Color(0xFFAFB9CF)),
+                          ),
+                        ),
+                      );
+                    })?.toList() ??
                         [],
                     looping: true,
                   );
@@ -822,26 +852,26 @@ class _TimePickerState extends State<_TimePicker> {
                         widget.onMinuteSelected?.call(_selectMinute);
                       },
                       children: _minutes?.map((e) {
-                            i++;
-                            final _currentIndex =
-                                _minutes.indexOf(_selectMinute);
-                            return Container(
-                              padding: EdgeInsets.only(
-                                  left: 15 * _wpx, right: 15 * _wpx),
-                              child: Center(
-                                child: Text(
-                                  e,
-                                  style: TextStyle(
-                                      fontSize: 15 ,
-                                      fontWeight: FontWeight.w400,
-                                      fontStyle: FontStyle.normal,
-                                      color: (i - 1) == _currentIndex
-                                          ? const Color(0xFF2888FF)
-                                          : const Color(0xFFAFB9CF)),
-                                ),
-                              ),
-                            );
-                          })?.toList() ??
+                        i++;
+                        final _currentIndex =
+                        _minutes.indexOf(_selectMinute);
+                        return Container(
+                          padding: EdgeInsets.only(
+                              left: 15 * _wpx, right: 15 * _wpx),
+                          child: Center(
+                            child: Text(
+                              e,
+                              style: TextStyle(
+                                  fontSize: 15*_wpx,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  color: (i - 1) == _currentIndex
+                                      ? const Color(0xFF2888FF)
+                                      : const Color(0xFFAFB9CF)),
+                            ),
+                          ),
+                        );
+                      })?.toList() ??
                           [],
                       looping: true,
                     );

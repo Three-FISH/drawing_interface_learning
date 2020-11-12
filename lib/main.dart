@@ -8,7 +8,6 @@ import 'package:oktoast/oktoast.dart';
 
 import 'calendar/calendar_picker_page.dart';
 import 'card_swiper/card_swiper_page.dart';
-
 void main() {
   runApp(MyApp());
   if (Platform.isAndroid) {

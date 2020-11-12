@@ -1,8 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
-import 'lyric.dart';
-import 'lyric_panel.dart';
 class Player extends StatefulWidget {
   /// [AudioPlayer] 播放地址
   final String audioUrl;
@@ -55,9 +53,6 @@ class PlayerState extends State<Player> {
   Duration duration;
   Duration position;
   double sliderValue;
-  Lyric lyric;
-  LyricPanel panel;
-  PositionChangeHandler handler;
 
   @override
   void initState() {
@@ -65,6 +60,7 @@ class PlayerState extends State<Player> {
     print("audioUrl:" + widget.audioUrl);
 
     audioPlayer = new AudioPlayer();
+
   }
 
   @override
