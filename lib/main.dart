@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drawing_interface_learning/ball_sport/ball_run_widget.dart';
 import 'package:drawing_interface_learning/play_rotation/play_rotation_page.dart';
+import 'package:drawing_interface_learning/tab_test/tab_test_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
@@ -92,11 +93,24 @@ class _MyHomePageState extends State<MyHomePage> {
            child: Container(
              width: double.infinity,
              padding: EdgeInsets.all( 10),
-             child: Text("4、日历",style: TextStyle(fontSize: 16),),
+             child: Text("4、选择日期",style: TextStyle(fontSize: 16),),
            ),
            onTap: (){
              Navigator.of(context).push(MaterialPageRoute(builder: (context){
                return CalendarPickerPage();
+             }));
+           },
+
+         ),
+         InkWell(
+           child: Container(
+             width: double.infinity,
+             padding: EdgeInsets.all( 10),
+             child: Text("5、动态tab栏",style: TextStyle(fontSize: 16),),
+           ),
+           onTap: (){
+             Navigator.of(context).push(MaterialPageRoute(builder: (context){
+               return TabTestPage();
              }));
            },
          ),

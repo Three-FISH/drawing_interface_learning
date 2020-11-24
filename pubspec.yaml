@@ -36,6 +36,8 @@ dependencies:
   charts_flutter: ^0.9.0
   webview_flutter: ^1.0.5
   animations: ^1.1.2
+  fl_chart: ^0.12.0
+  write_text: ^0.0.1
 
 
 
